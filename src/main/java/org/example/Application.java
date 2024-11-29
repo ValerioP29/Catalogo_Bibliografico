@@ -29,7 +29,15 @@ public class Application {
             switch (scelta) {
                 case 1 -> {
                     System.out.println("Inserisci il tipo (libro o rivista): ");
-                    String tipo = scanner.nextLine();
+                    String tipo ;
+                    while(true) {
+                        tipo = scanner.nextLine();
+                        if (tipo.equalsIgnoreCase("libro") || tipo.equalsIgnoreCase("rivista")){
+                            break;
+                        } else {
+                            System.out.println("Errore: inserisci libro o rivista.");
+                        }
+                    }
                     System.out.println("ISBN: ");
                     String isbn = scanner.nextLine();
                     System.out.println("Titolo:");
@@ -49,10 +57,18 @@ public class Application {
 
                     } else if
                     (tipo.equalsIgnoreCase("rivista")) {
-                            System.out.println("Periodicità (SETTIMANALE, MENSILE, SEMESTRALE): ");
-                            String periodicita = scanner.nextLine().toUpperCase();
-                            archivio.aggiungiElemento(new Rivista(isbn, titolo, anno, pagine, Periodicita.valueOf(periodicita)));
+                        System.out.println("Periodicità (SETTIMANALE, MENSILE, SEMESTRALE): ");
+                        String periodicita;
+                        while (true) {
+                            try {
+                                periodicita = scanner.nextLine().toUpperCase();
+                                break;
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Errore: inserisci una periodicità valida (SETTIMANALE, MENSILE, SEMESTRALE).");
+                            }
                         }
+                        archivio.aggiungiElemento(new Rivista(isbn, titolo, anno, pagine, Periodicita.valueOf(periodicita)));
+                    }
                     }
                     case 2 -> {
                         System.out.println("Inserisci ISBN: ");
@@ -112,7 +128,7 @@ public class Application {
                         try {
                             System.out.println("Elemento aggiornato: " + archivio.ricercaPerISBN(isbn));
                         } catch (ISBNNonTrovata e) {
-
+                            System.out.println("Aggiornamento non riuscito.");
                         }
                     }
                 }
