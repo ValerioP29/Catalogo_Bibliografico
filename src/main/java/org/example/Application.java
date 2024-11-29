@@ -1,5 +1,6 @@
 package org.example;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Application {
@@ -29,10 +30,10 @@ public class Application {
             switch (scelta) {
                 case 1 -> {
                     System.out.println("Inserisci il tipo (libro o rivista): ");
-                    String tipo ;
-                    while(true) {
+                    String tipo;
+                    while (true) {
                         tipo = scanner.nextLine();
-                        if (tipo.equalsIgnoreCase("libro") || tipo.equalsIgnoreCase("rivista")){
+                        if (tipo.equalsIgnoreCase("libro") || tipo.equalsIgnoreCase("rivista")) {
                             break;
                         } else {
                             System.out.println("Errore: inserisci libro o rivista.");
@@ -43,10 +44,36 @@ public class Application {
                     System.out.println("Titolo:");
                     String titolo = scanner.nextLine();
                     System.out.println("Anno pubblicazione:");
-                    int anno = scanner.nextInt();
+                    int anno;
+                    while (true) {
+                        try {
+                            anno = scanner.nextInt();
+                            if (anno > 0) {
+                                break;
+                            } else {
+                                System.out.println("Inserisci  un anno valido.");
+                            }
+                        } catch (InputMismatchException e) {
+                            System.out.println("Inserisci un numero valido");
+                            scanner.nextLine();
+                        }
+                    }
                     System.out.println("Numero pagine:");
-                    int pagine = scanner.nextInt();
-                    scanner.nextLine();
+                    int pagine;
+                    while (true) {
+                        try {
+                            pagine = scanner.nextInt();
+                            if (pagine > 0) {
+                                break;
+                            } else {
+                                System.out.println("inserisci un numero di pagine valido.");
+                            }
+                        } catch (InputMismatchException e) {
+                            System.out.println("Errore: inserisci numeri validi.");
+                            scanner.nextLine();
+                        }
+                    }
+
 
                     if (tipo.equalsIgnoreCase("libro")) {
                         System.out.println("Autore: ");
@@ -57,45 +84,49 @@ public class Application {
 
                     } else if
                     (tipo.equalsIgnoreCase("rivista")) {
-                        System.out.println("Periodicità (SETTIMANALE, MENSILE, SEMESTRALE): ");
-                        String periodicita;
+
+                        Periodicita periodicitaEnum = null;
+                        scanner.nextLine();
                         while (true) {
                             try {
-                                periodicita = scanner.nextLine().toUpperCase();
+                                System.out.println("Periodicità (SETTIMANALE, MENSILE, SEMESTRALE): ");
+                                String periodicita = scanner.nextLine().toUpperCase();
+                                periodicitaEnum = Periodicita.valueOf(periodicita);
                                 break;
                             } catch (IllegalArgumentException e) {
                                 System.out.println("Errore: inserisci una periodicità valida (SETTIMANALE, MENSILE, SEMESTRALE).");
                             }
                         }
-                        archivio.aggiungiElemento(new Rivista(isbn, titolo, anno, pagine, Periodicita.valueOf(periodicita)));
+                        archivio.aggiungiElemento(new Rivista(isbn, titolo, anno, pagine, periodicitaEnum));
                     }
-                    }
-                    case 2 -> {
-                        System.out.println("Inserisci ISBN: ");
-                        String isbn = scanner.nextLine();
-                        try {
-                            System.out.println(archivio.ricercaPerISBN(isbn));
-                        } catch (ISBNNonTrovata e) {
-                            System.out.println(e.getMessage());
-                        }
-                    }
-                    case 3 -> {
-                        System.out.println("Inserisci ISBN: ");
-                        String isbn = scanner.nextLine();
-                        archivio.rimuoviElemento(isbn);
-                    }
-                    case 4 -> {
-                        System.out.println("Inserisci anno di pubblicazione: ");
-                        int anno = scanner.nextInt();
-                        scanner.nextLine();
-                        archivio.ricercaPerAnno(anno);
-                    }
-                    case 5-> {
-                        System.out.println("Inserisci autore: ");
-                        String autore = scanner.nextLine();
-                        archivio.ricercaPerAutore(autore);
 
+                }
+                case 2 -> {
+                    System.out.println("Inserisci ISBN: ");
+                    String isbn = scanner.nextLine();
+                    try {
+                        System.out.println(archivio.ricercaPerISBN(isbn));
+                    } catch (ISBNNonTrovata e) {
+                        System.out.println(e.getMessage());
                     }
+                }
+                case 3 -> {
+                    System.out.println("Inserisci ISBN: ");
+                    String isbn = scanner.nextLine();
+                    archivio.rimuoviElemento(isbn);
+                }
+                case 4 -> {
+                    System.out.println("Inserisci anno di pubblicazione: ");
+                    int anno = scanner.nextInt();
+                    scanner.nextLine();
+                    archivio.ricercaPerAnno(anno);
+                }
+                case 5 -> {
+                    System.out.println("Inserisci autore: ");
+                    String autore = scanner.nextLine();
+                    archivio.ricercaPerAutore(autore);
+
+                }
                 case 6 -> {
                     System.out.println("Inserisci ISBN dell'elemento da aggiornare:");
                     String isbn = scanner.nextLine();
@@ -134,14 +165,16 @@ public class Application {
                 }
 
                 case 7 -> archivio.statistiche();
-                    case 8 -> esci = true;
-                    default -> System.out.println("Scelta non valida.");
-                }
-                if (!esci) {
-                    System.out.println("\n premi invio per tornare al menu principale: ");
-                    scanner.nextLine();
-                }
+                case 8 -> esci = true;
+                default -> System.out.println("Scelta non valida.");
             }
+            if (!esci) {
+                System.out.println("\n premi invio per tornare al menu principale: ");
+                scanner.nextLine();
+            }
+
+        }
+
         scanner.close();
         }
     }
